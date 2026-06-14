@@ -1,7 +1,6 @@
 package com.example.immunify.navigate
 
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
@@ -17,46 +16,61 @@ import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 
 @Composable
-fun NavigasiBar(
-    navController: NavController
-) {
-    val items = listOf(
-        BottomNavItem(
-            name = "Home",
-            route = Route.HOME,
-            icon = Icons.Outlined.Home,
-            iconSelected = Icons.Filled.Home
-        ),
-        BottomNavItem(
-            name = "Clinics",
-            route = Route.VAKSIN,
-            icon = Icons.Outlined.LocalHospital,
-            iconSelected = Icons.Filled.LocalHospital
-        ),
-        BottomNavItem(
-            name = "Tracker",
-            route = Route.TRACKER,
-            icon = Icons.Outlined.CalendarMonth,
-            iconSelected = Icons.Filled.CalendarMonth
-        ),
-        BottomNavItem(
-            name = "Profile",
-            route = Route.PROFILE,
-            icon = Icons.Outlined.AccountCircle,
-            iconSelected = Icons.Filled.AccountCircle
-        )
+fun NavigasiBar(navController: NavController) {
+    var isPenyedia by remember { mutableStateOf(false) }
+    val currentUser = FirebaseAuth.getInstance().currentUser
+
+    LaunchedEffect(currentUser) {
+        if (currentUser != null) {
+            val database = FirebaseDatabase.getInstance("https://immunify-2e6d6-default-rtdb.asia-southeast1.firebasedatabase.app/")
+            val listener = object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    val currentEmail = currentUser.email?.trim()?.lowercase()
+                    for (userSnapshot in snapshot.children) {
+                        val dbEmail = userSnapshot.child("email").value.toString().trim().lowercase()
+                        if (dbEmail == currentEmail) {
+                            // Cek isPenyedia atau mentor
+                            val statusPenyedia = userSnapshot.child("isPenyedia").value.toString() == "true" || userSnapshot.child("mentor").value.toString() == "true"
+                            isPenyedia = statusPenyedia
+                            break
+                        }
+                    }
+                }
+                override fun onCancelled(error: DatabaseError) {}
+            }
+            database.getReference("users").addValueEventListener(listener)
+        }
+    }
+
+    // List Navigasi Dinamis
+    val items = mutableListOf(
+        BottomNavItem("Home", Route.HOME, Icons.Outlined.Home, Icons.Filled.Home),
+        BottomNavItem("Clinics", Route.VAKSIN, Icons.Outlined.LocalHospital, Icons.Filled.LocalHospital)
     )
+
+    // HANYA TAMBAHKAN MENU TRACKER JIKA BUKAN PENYEDIA (PENGGUNA BIASA)
+    if (!isPenyedia) {
+        items.add(BottomNavItem("Tracker", Route.TRACKER, Icons.Outlined.CalendarMonth, Icons.Filled.CalendarMonth))
+    }
+
+    // Menu Profil selalu ada di ujung kanan
+    items.add(BottomNavItem("Profile", Route.PROFILE, Icons.Outlined.AccountCircle, Icons.Filled.AccountCircle))
 
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
@@ -83,7 +97,7 @@ fun NavigasiBar(
                         Icon(
                             imageVector = if (selected) item.iconSelected else item.icon,
                             contentDescription = item.name,
-                            modifier = androidx.compose.ui.Modifier.size(24.dp)
+                            modifier = Modifier.size(24.dp)
                         )
                     }
                 },

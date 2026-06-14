@@ -57,6 +57,17 @@ fun VaksinScreen(
             ) {
                 CircularProgressIndicator(color = colorResource(id = R.color.blue1))
             }
+        } else if (vaksinList.isEmpty()) {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = "Belum ada vaksin yang tersedia dari faskes saat ini.",
+                    color = Color.Gray,
+                    fontSize = 14.sp
+                )
+            }
         } else {
             LazyColumn(
                 verticalArrangement = Arrangement.spacedBy(10.dp),
@@ -64,15 +75,19 @@ fun VaksinScreen(
                 modifier = Modifier.fillMaxSize()
             ) {
                 items(vaksinList.size) { index ->
-                    val itemData = vaksinList[index].item
+                    val vaksinResponse = vaksinList[index]
+                    val itemData = vaksinResponse.item
+
                     if (itemData != null) {
+                        // PERBAIKAN: Kita ambil 'key' asli dari Firebase (contoh: "1" atau "2")
+                        val firebaseKey = vaksinResponse.key ?: "1"
+
                         DaftarVaksinCard(
                             namaVaksin = itemData.namaVaksin,
                             jenis = itemData.jenis,
                             navController = navController,
                             currentVaksinViewModel = currentVaksinViewModel,
-                            vaksinIndex = index,
-                            id = itemData.id // Mengirim ID yang benar
+                            vaksinKey = firebaseKey // Kirim key yang benar ke Card
                         )
                     }
                 }
@@ -110,16 +125,17 @@ fun DaftarVaksinCard(
     jenis: String,
     navController: NavController,
     currentVaksinViewModel: CurrentVaksinViewModel,
-    vaksinIndex: Int,
-    id: String
+    vaksinKey: String // Parameter diubah menjadi vaksinKey
 ) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 20.dp, vertical = 5.dp)
             .clickable {
-                // Logika navigasi yang benar: Mengirim ID yang tepat
-                currentVaksinViewModel.setCurrentVaksin(id.toIntOrNull() ?: vaksinIndex)
+                // PERBAIKAN: Konversi Key Firebase menjadi ID yang valid
+                val targetId = vaksinKey.replace(Regex("[^0-9]"), "").toIntOrNull() ?: 1
+
+                currentVaksinViewModel.setCurrentVaksin(targetId)
                 currentVaksinViewModel.setCurrentNamaVaksin(namaVaksin)
                 navController.navigate(Route.DETAIL_VAKSIN)
             },
@@ -148,7 +164,6 @@ fun DaftarVaksinCard(
                     modifier = Modifier.size(22.dp)
                 )
             }
-
             Spacer(Modifier.width(16.dp))
 
             // Nama dan Jenis Vaksin

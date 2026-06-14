@@ -10,9 +10,9 @@ import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.DateRange
+import androidx.compose.material.icons.filled.LocalHospital
 import androidx.compose.material.icons.outlined.ExitToApp
-import androidx.compose.material.icons.outlined.Info
-import androidx.compose.material.icons.outlined.Star
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -142,13 +142,12 @@ fun ProfilMenu(navController: NavController, status: String) {
                     .padding(vertical = 8.dp)
             ) {
                 Icon(
-                    imageVector = Icons.Outlined.Star,
+                    imageVector = Icons.Default.LocalHospital,
                     contentDescription = "Daftar Faskes",
                     modifier = Modifier.size(28.dp),
                     tint = colorResource(id = R.color.blue1)
                 )
 
-                // --- PERBAIKAN LOGIKA TOMBOL DI SINI ---
                 if (status == "Pengguna") {
                     ClickableText(
                         text = AnnotatedString("Daftar Sebagai Fasilitas Kesehatan"),
@@ -157,38 +156,38 @@ fun ProfilMenu(navController: NavController, status: String) {
                     )
                 } else {
                     ClickableText(
-                        text = AnnotatedString("Kelola Stok Vaksin"), // Teks diubah
+                        text = AnnotatedString("Kelola Stok Vaksin"),
                         style = MaterialTheme.typography.bodyLarge.copy(fontSize = 16.sp),
-                        onClick = { navController.navigate(Route.FORM_TAMBAH_VAKSIN) } // Rute diubah
+                        onClick = { navController.navigate(Route.FORM_TAMBAH_VAKSIN) }
                     )
                 }
-                // ---------------------------------------
             }
 
-            Divider(modifier = Modifier.padding(vertical = 8.dp), color = Color.LightGray)
+            if (status == "Pengguna") {
+                HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp), color = Color.LightGray)
 
-            // Menu 2: Riwayat
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(12.dp),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 8.dp)
-            ) {
-                Icon(
-                    imageVector = Icons.Outlined.Info,
-                    contentDescription = "Riwayat",
-                    modifier = Modifier.size(28.dp),
-                    tint = colorResource(id = R.color.blue1)
-                )
-                ClickableText(
-                    text = AnnotatedString("Riwayat Imunisasi"),
-                    style = MaterialTheme.typography.bodyLarge.copy(fontSize = 16.sp),
-                    onClick = { navController.navigate(Route.RIWAYAT) }
-                )
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(12.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 8.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.DateRange,
+                        contentDescription = "Riwayat",
+                        modifier = Modifier.size(28.dp),
+                        tint = colorResource(id = R.color.blue1)
+                    )
+                    ClickableText(
+                        text = AnnotatedString("Riwayat Imunisasi"),
+                        style = MaterialTheme.typography.bodyLarge.copy(fontSize = 16.sp),
+                        onClick = { navController.navigate(Route.RIWAYAT) }
+                    )
+                }
             }
 
-            Divider(modifier = Modifier.padding(vertical = 8.dp), color = Color.LightGray)
+            HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp), color = Color.LightGray)
 
             // Menu 3: Logout
             Row(

@@ -1,8 +1,6 @@
 package com.example.immunify.ui.presentation.riwayat_sewa
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -11,6 +9,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.History
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -19,9 +18,7 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.colorResource
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -30,6 +27,8 @@ import androidx.navigation.NavController
 import com.example.immunify.R
 import com.example.immunify.navigate.Route
 import com.example.immunify.ui.presentation.login_screen.UserViewModel
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.material.icons.filled.DateRange
 
 @Composable
 fun RiwayatScreen(
@@ -58,7 +57,6 @@ fun RiwayatScreen(
                     )
                 )
             )
-            .padding(horizontal = 18.dp, vertical = 8.dp)
     ) {
         HeaderRiwayat(navController)
 
@@ -66,7 +64,7 @@ fun RiwayatScreen(
             text = "Menampilkan Riwayat Pesanan:",
             modifier = Modifier
                 .alpha(0.6f)
-                .padding(bottom = 12.dp, start = 8.dp),
+                .padding(bottom = 12.dp, start = 20.dp),
             fontSize = 14.sp
         )
 
@@ -80,14 +78,15 @@ fun RiwayatScreen(
             }
         } else {
             LazyColumn(
-                contentPadding = PaddingValues(bottom = 80.dp),
-                verticalArrangement = Arrangement.spacedBy(10.dp)
+                contentPadding = PaddingValues(start = 20.dp, end = 20.dp, bottom = 80.dp),
+                verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
                 items(riwayatList) { riwayat ->
                     ItemRiwayatCard(
                         jenisVaksin = riwayat.jenisVaksin,
                         namaPenyedia = riwayat.namaPenyedia,
-                        waktuPesanan = riwayat.waktuPesanan,
+                        tanggalVaksin = riwayat.tanggalVaksin, // PERBAIKAN 1: Mengambil Tanggal Kalender
+                        waktuDipesan = riwayat.waktuPesanan,   // Mengambil Timestamp pemesanan
                         navController = navController
                     )
                 }
@@ -102,7 +101,7 @@ fun HeaderRiwayat(navController: NavController) {
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
             .fillMaxWidth()
-            .padding(bottom = 16.dp, top = 8.dp)
+            .padding(start = 10.dp, bottom = 16.dp, top = 8.dp)
     ) {
         IconButton(onClick = { navController.popBackStack() }) {
             Icon(
@@ -123,67 +122,77 @@ fun HeaderRiwayat(navController: NavController) {
 fun ItemRiwayatCard(
     jenisVaksin: String,
     namaPenyedia: String,
-    waktuPesanan: String,
+    tanggalVaksin: String,
+    waktuDipesan: String,
     navController: NavController
 ) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(
-                color = Color.White,
-                shape = RoundedCornerShape(12.dp)
-            )
-            .border(1.dp, Color(0xFFEEEEEE), RoundedCornerShape(12.dp))
-            .padding(12.dp),
-        verticalAlignment = Alignment.CenterVertically
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(16.dp),
+        colors = CardDefaults.cardColors(containerColor = Color.White),
+        border = BorderStroke(1.dp, Color(0xFFEEEEEE)) // <--- PERBAIKANNYA DI SINI
     ) {
-        Box(
+        Row(
             modifier = Modifier
-                .size(60.dp)
-                .clip(CircleShape)
+                .fillMaxWidth()
+                .padding(16.dp),
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            Image(
-                painter = painterResource(id = R.drawable.logo_immunify), // Nanti ganti dengan ikon vaksin
-                contentDescription = null,
-                contentScale = ContentScale.Crop,
-                modifier = Modifier.fillMaxSize()
-            )
-        }
+            Box(
+                modifier = Modifier
+                    .size(56.dp)
+                    .clip(CircleShape)
+                    .background(colorResource(R.color.blue1).copy(alpha = 0.15f)),
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    imageVector = Icons.Default.DateRange,
+                    contentDescription = "Ikon Riwayat",
+                    tint = colorResource(R.color.blue1),
+                    modifier = Modifier.size(32.dp)
+                )
+            }
 
-        Spacer(modifier = Modifier.width(14.dp))
+            Spacer(modifier = Modifier.width(16.dp))
 
-        Column(modifier = Modifier.weight(1f)) {
-            Text(
-                text = jenisVaksin,
-                fontSize = 18.sp,
-                fontWeight = FontWeight.SemiBold,
-                color = Color.Black
-            )
-            Text(
-                text = namaPenyedia,
-                fontSize = 14.sp,
-                color = Color.DarkGray,
-                modifier = Modifier.padding(bottom = 6.dp)
-            )
-            Text(
-                text = "Tanggal: $waktuPesanan",
-                fontSize = 12.sp,
-                fontWeight = FontWeight.Bold,
-                color = colorResource(id = R.color.blue1)
-            )
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    text = jenisVaksin,
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.Black
+                )
+                Text(
+                    text = namaPenyedia,
+                    fontSize = 13.sp,
+                    color = Color.DarkGray,
+                    modifier = Modifier.padding(bottom = 6.dp)
+                )
 
-            Spacer(modifier = Modifier.height(8.dp))
+                Text(
+                    text = "Tgl Imunisasi: $tanggalVaksin",
+                    fontSize = 13.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = colorResource(id = R.color.blue1)
+                )
 
-            // Tombol untuk memberi ulasan ke faskes tersebut
-            Text(
-                text = "Beri Ulasan",
-                fontSize = 12.sp,
-                fontWeight = FontWeight.SemiBold,
-                color = colorResource(id = R.color.blue1),
-                modifier = Modifier.clickable {
-                    navController.navigate(Route.REVIEW_PENYEDIA) // Sebelumnya Route.REVIEWMENTOR
-                }
-            )
+                Text(
+                    text = "Dipesan: $waktuDipesan",
+                    fontSize = 10.sp,
+                    color = Color.Gray,
+                    modifier = Modifier.padding(bottom = 10.dp, top = 2.dp)
+                )
+
+                Text(
+                    text = "Beri Ulasan",
+                    fontSize = 13.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    color = colorResource(id = R.color.blue1),
+                    modifier = Modifier.clickable {
+                        // navController.navigate(Route.REVIEW_PENYEDIA)
+                    }
+                )
+            }
         }
     }
 }

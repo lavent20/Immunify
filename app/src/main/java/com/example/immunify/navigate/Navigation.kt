@@ -35,7 +35,6 @@ fun Navigasi(navController: NavHostController) {
     val userViewModel: UserViewModel = hiltViewModel()
     val vaksinViewModel: CurrentVaksinViewModel = hiltViewModel()
     
-    // Instansiasi HomeViewModel bersama agar data tersambung ke seluruh sub-fitur Beranda
     val homeViewModel: HomeViewModel = hiltViewModel()
 
     NavHost(
@@ -68,8 +67,7 @@ fun Navigasi(navController: NavHostController) {
                 vaksinViewModel = vaksinViewModel
             )
         }
-        
-        // ─── NAVIGASI FITUR INSIGHTS (EDUKASI) ───
+
         composable(Route.INSIGHTS) {
             InsightsScreen(
                 navController = navController,
@@ -88,7 +86,6 @@ fun Navigasi(navController: NavHostController) {
             )
         }
 
-        // ─── NAVIGASI FITUR NOTIFIKASI ───
         composable(Route.NOTIFICATION) {
             NotificationScreen(
                 navController = navController,
@@ -96,7 +93,6 @@ fun Navigasi(navController: NavHostController) {
             )
         }
 
-        // ─── NAVIGASI VAKSIN & KLINIK ───
         composable(Route.VAKSIN) {
             VaksinScreen(
                 navController = navController,
@@ -143,7 +139,7 @@ fun Navigasi(navController: NavHostController) {
             )
         }
         composable(Route.TRACKER) {
-            RiwayatScreen(
+            com.example.immunify.ui.presentation.tracker.TrackerScreen(
                 navController = navController,
                 userViewModel = userViewModel
             )
@@ -160,7 +156,7 @@ fun Navigasi(navController: NavHostController) {
         composable(Route.FORM_TAMBAH_VAKSIN) {
             FormTambahVaksin(
                 navController = navController,
-                userViewModel = userViewModel // Pastikan variabel ini sesuai dengan nama ViewModel user di Navigasi Anda
+                userViewModel = userViewModel
             )
         }
     }

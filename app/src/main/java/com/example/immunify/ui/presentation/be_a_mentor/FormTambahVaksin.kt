@@ -35,7 +35,7 @@ fun FormTambahVaksin(
 ) {
     val context = LocalContext.current
     val username by userViewModel.username.collectAsState()
-    val vaksinMasterList by homeViewModel.vaksinList.collectAsState()
+    val vaksinMasterList by homeViewModel.masterVaksinList.collectAsState()
 
     var expanded by remember { mutableStateOf(false) }
     var selectedVaksin by remember { mutableStateOf<VaksinModelResponse?>(null) }
