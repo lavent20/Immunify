@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "56886762432",
+    "project_id": "immunify-2e6d6",
+    "storage_bucket": "immunify-2e6d6.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:56886762432:android:6b68495cc438ab948d8625",
+        "android_client_info": {
+          "package_name": "com.example.immunify"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCY6hZ_IiKDbOYIVpTIhb8TpdOXNiIIhJ4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

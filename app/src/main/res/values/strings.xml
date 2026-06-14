@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">Immunify</string>
+    <string name="arif">Arif Rama Putra Said</string>
+    <string name="richo">M Richo Abadinata</string>
+    <string name="aziz">Aziz Purnomo</string>
+    <string name="jst">Jaringan Saraf Tiruan</string>
+    <string name="rpl">Rekayasa Perangkat Lunak</string>
+    <string name="pemdas">Pemrograman Dasar</string>
+</resources>
